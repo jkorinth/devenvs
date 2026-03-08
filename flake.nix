@@ -5,6 +5,19 @@
     nixpkgs.url = "nixpkgs/nixos-25.11";
     flake-utils.url = "github:numtide/flake-utils";
     rust-overlay.url = "github:oxalica/rust-overlay";
+
+    zephyr = {
+      url = "github:zephyrproject-rtos/zephyr/v4.3.0";
+      flake = false;
+    };
+
+    zephyr-nix = {
+      url = "github:nix-community/zephyr-nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+	zephyr.follows = "zephyr";
+      };
+    };
   };
 
   outputs =
@@ -12,6 +25,7 @@
       nixpkgs,
       flake-utils,
       rust-overlay,
+      zephyr-nix,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -20,7 +34,15 @@
         pkgs = import nixpkgs {
           inherit system;
           overlays = [ rust-overlay.overlays.default ];
+          config = {
+            allowUnfree = true;
+            segger-jlink.acceptLicense = true;
+	    permittedInsecurePackages = [
+                "python3.13-ecdsa-0.19.1"
+            ];
+          };
         };
+
         pythonEnv = pkgs.python3.withPackages (
           ps: with ps; [
             accessible-pygments
@@ -66,6 +88,7 @@
             natsort
             networkx
             numpy
+	    patool
             packaging
             pandas
             paramiko
@@ -99,6 +122,7 @@
             scikit-base
             scipy
             selenium
+            semver
             setuptools
             six
             sphinx
@@ -130,6 +154,7 @@
             termcolor
             tf-keras
             tomli
+	    tqdm
             types-ipaddress
             typing-extensions
             urllib3
@@ -141,13 +166,19 @@
             zipp
           ]
         );
-      in
-      {
-        devShells = {
-          zephyr = pkgs.mkShell {
+
+        libraryPath = pkgs.lib.makeLibraryPath [
+          pkgs.stdenv.cc.cc.lib
+          pkgs.zlib
+          pkgs.libusb1
+          pkgs.udev
+        ];
+
+	zephyr = zephyr-nix.packages.${system};
+
+	zephyrShell = pkgs.mkShell {
             name = "zephyr-dev";
             packages = with pkgs; [
-              pythonEnv
               cmake
               dtc
               esptool
@@ -155,9 +186,55 @@
               gnumake
               gperf
               mbed-cli
+              minicom
               ninja
+              nrf-udev
+              nrfutil
               openocd
+              pythonEnv
+              saleae-logic-2
               screen
+            ];
+
+            shellHook = ''
+              export LD_LIBRARY_PATH="${libraryPath}:$LD_LIBRARY_PATH"
+            '';
+          };
+      in
+      {
+        devShells = {
+	  zephyr-dev = zephyrShell;
+
+          zmk-dev = pkgs.mkShell {
+            name = "zmk-dev";
+	    #inputsFrom = [ zephyrShell ];
+            packages = with pkgs; [
+	      adafruit-nrfutil
+	      cmake
+	      ninja
+	      protobuf
+	      (zephyr-nix.packages.${system}.sdk-0_16.override {
+	        targets = [
+		  "arm-zephyr-eabi"
+	        ];
+	        inherit lib;
+	      })
+	      zephyr.pythonEnv
+              pythonEnv
+	      zephyr.hosttools
+	    ] ++ (with pkgs.python3Packages; [ uv pre-commit ]);
+
+            shellHook = ''
+              	      export PATH=$PATH:~/.local/bin
+              	      uv tool install zmk --force
+              	    '';
+          };
+
+          typst-dev = pkgs.mkShell {
+            name = "typst-dev";
+            packages = with pkgs; [
+              typst
+              typstyle
             ];
           };
         };
