@@ -22,9 +22,11 @@
 
   outputs =
     {
-      nixpkgs,
       flake-utils,
+      nixpkgs,
       rust-overlay,
+      self,
+      zephyr,
       zephyr-nix,
       ...
     }:
@@ -42,259 +44,19 @@
             ];
           };
         };
-
-        pythonEnv = pkgs.python3.withPackages (
-          ps: with ps; [
-            accessible-pygments
-            adb-shell
-            alabaster
-            anyio
-            anytree
-            babel
-            breathe
-            build
-            cbor
-            cbor2
-            certifi
-            charset-normalizer
-            click
-            cmsis-pack-manager
-            colorama
-            cryptography
-            docopt
-            docutils
-            doxmlparser
-            exceptiongroup
-            furo
-            graphviz
-            grpcio
-            grpcio-tools
-            h11
-            idna
-            imagesize
-            importlib-metadata
-            iniconfig
-            intelhex
-            jinja2
-            jsonschema
-            kconfiglib
-            libclang
-            lit
-            lxml
-            markdown-it-py
-            markupsafe
-            mdurl
-            mercurial
-            natsort
-            networkx
-            numpy
-            patool
-            packaging
-            pandas
-            paramiko
-            pexpect
-            pluggy
-            prettytable
-            protobuf
-            psutil
-            ptyprocess
-            py
-            pyasn1
-            pycparser
-            pycryptodome
-            pyelftools
-            pygments
-            pykwalify
-            pyparsing
-            pyserial
-            pyshark
-            pyspinel
-            pytest
-            python-dateutil
-            python-dotenv
-            pyusb
-            pyyaml
-            requests
-            rich
-            roman-numerals-py
-            ruamel-base
-            ruamel-yaml
-            scikit-base
-            scipy
-            selenium
-            semver
-            setuptools
-            six
-            sphinx
-            sphinx-autobuild
-            sphinx-copybutton
-            sphinx-design
-            sphinx-last-updated-by-git
-            sphinx-notfound-page
-            sphinx-reredirects
-            sphinx-rtd-dark-mode
-            sphinx-rtd-theme
-            sphinx-sitemap
-            sphinx-tabs
-            sphinx-togglebutton
-            sphinxcontrib-applehelp
-            sphinxcontrib-devhelp
-            sphinxcontrib-htmlhelp
-            sphinxcontrib-jquery
-            sphinxcontrib-jsmath
-            sphinxcontrib-mermaid
-            sphinxcontrib-plantuml
-            sphinxcontrib-programoutput
-            sphinxcontrib-qthelp
-            sphinxcontrib-serializinghtml
-            sphinxcontrib-svg2pdfconverter
-            starlette
-            statsmodels
-            tensorflow
-            termcolor
-            tf-keras
-            tomli
-            tqdm
-            types-ipaddress
-            typing-extensions
-            urllib3
-            uvicorn
-            watchfiles
-            websockets
-            west
-            wheel
-            zipp
-          ]
-        );
-
-        libraryPath = pkgs.lib.makeLibraryPath [
-          pkgs.stdenv.cc.cc.lib
-          pkgs.zlib
-          pkgs.libusb1
-          pkgs.udev
-        ];
-
-        zephyr = zephyr-nix.packages.${system};
-
-        zephyrShell = pkgs.mkShell {
-          name = "zephyr-dev";
-          packages = with pkgs; [
-            cmake
-            dtc
-            esptool
-            gcc-arm-embedded
-            gnumake
-            gperf
-            mbed-cli
-            minicom
-            ninja
-            nrf-udev
-            nrfutil
-            openocd
-            pythonEnv
-            saleae-logic-2
-            screen
-          ];
-
-          shellHook = ''
-            export LD_LIBRARY_PATH="${libraryPath}:$LD_LIBRARY_PATH"
-          '';
-        };
-
-	kicad = pkgs.kicad;
-
-        electronicsPackages = with pkgs; [
-          appimage-run
-          ergogen
-          findutils
-          freecad
-          gh
-          gnumake
-          interactive-html-bom
-          kicad
-          kicadAddons.kikit
-          python3
-          saleae-logic-2
-        ];
-
-        electronicsEnv = pkgs.buildEnv {
-          name = "electronics-env";
-          paths = electronicsPackages;
+        devShells = import ./shells {
+          inherit
+            pkgs
+            rust-overlay
+            self
+            system
+            zephyr
+            zephyr-nix
+            ;
         };
       in
       {
-        devShells = {
-          zephyr-dev = zephyrShell;
-
-          zmk-dev = pkgs.mkShell {
-            name = "zmk-dev";
-            #inputsFrom = [ zephyrShell ];
-            packages =
-              with pkgs;
-              [
-                adafruit-nrfutil
-                cmake
-                ninja
-                protobuf
-                (zephyr-nix.packages.${system}.sdk-0_16.override {
-                  targets = [
-                    "arm-zephyr-eabi"
-                  ];
-                  inherit lib;
-                })
-                zephyr.pythonEnv
-                pythonEnv
-                zephyr.hosttools
-              ]
-              ++ (with pkgs.python3Packages; [
-                uv
-                pre-commit
-              ]);
-
-            shellHook = ''
-              	      export PATH=$PATH:~/.local/bin
-              	      uv tool install zmk --force
-              	    '';
-          };
-
-          typst-dev = pkgs.mkShell {
-            name = "typst-dev";
-            packages = with pkgs; [
-              typst
-              typstyle
-            ];
-          };
-
-	  rust-dev = pkgs.mkShell {
-	    name = "rust-dev";
-	    packages = with pkgs; [
-	      openssl
-	      pkg-config
-	      rust-bin.beta.latest.default
-	    ];
-	  };
-
-          electronics-dev = pkgs.mkShell {
-            name = "electronics-dev";
-            packages = electronicsPackages;
-
-            shellHook = ''
-              	  echo
-              	  echo "=== Welcome to your wasted life playground! ==="
-              	  echo
-              	  echo "KiCAD: `${kicad}/bin/kicad-cli --version`"
-              	  echo "KiKit: `${pkgs.kikit}/bin/kikit --version`"
-              	  echo "ergogen: `${pkgs.ergogen}/bin/ergogen --version`"
-              	  echo "ibom: `${pkgs.interactive-html-bom}/bin/generate_interactive_bom --version`"
-              	  echo "FreeCAD: `${pkgs.freecad}/bin/freecadcmd --version`"
-              	  echo
-
-              	  export KICAD10_FOOTPRINT_DIR="${kicad.libraries.footprints}/share/kicad/footprints"
-              	  export KICAD10_3DMODEL_DIR="${kicad.libraries.packages3d}/share/kicad/3dmodels"
-              	  export KICAD10_SYMBOL_DIR="${kicad.libraries.symbols}/share/kicad/symbols"
-              	'';
-          };
-        };
+        inherit devShells;
       }
     );
 }
