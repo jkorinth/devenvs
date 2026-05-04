@@ -2,7 +2,7 @@
   description = "Dev environments for common projects/languages.";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-25.11";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     rust-overlay.url = "github:oxalica/rust-overlay";
 
@@ -15,7 +15,7 @@
       url = "github:nix-community/zephyr-nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-	zephyr.follows = "zephyr";
+        zephyr.follows = "zephyr";
       };
     };
   };
@@ -37,8 +37,8 @@
           config = {
             allowUnfree = true;
             segger-jlink.acceptLicense = true;
-	    permittedInsecurePackages = [
-                "python3.13-ecdsa-0.19.1"
+            permittedInsecurePackages = [
+              "python3.13-ecdsa-0.19.1"
             ];
           };
         };
@@ -88,7 +88,7 @@
             natsort
             networkx
             numpy
-	    patool
+            patool
             packaging
             pandas
             paramiko
@@ -154,7 +154,7 @@
             termcolor
             tf-keras
             tomli
-	    tqdm
+            tqdm
             types-ipaddress
             typing-extensions
             urllib3
@@ -174,55 +174,82 @@
           pkgs.udev
         ];
 
-	zephyr = zephyr-nix.packages.${system};
+        zephyr = zephyr-nix.packages.${system};
 
-	zephyrShell = pkgs.mkShell {
-            name = "zephyr-dev";
-            packages = with pkgs; [
-              cmake
-              dtc
-              esptool
-              gcc-arm-embedded
-              gnumake
-              gperf
-              mbed-cli
-              minicom
-              ninja
-              nrf-udev
-              nrfutil
-              openocd
-              pythonEnv
-              saleae-logic-2
-              screen
-            ];
+        zephyrShell = pkgs.mkShell {
+          name = "zephyr-dev";
+          packages = with pkgs; [
+            cmake
+            dtc
+            esptool
+            gcc-arm-embedded
+            gnumake
+            gperf
+            mbed-cli
+            minicom
+            ninja
+            nrf-udev
+            nrfutil
+            openocd
+            pythonEnv
+            saleae-logic-2
+            screen
+          ];
 
-            shellHook = ''
-              export LD_LIBRARY_PATH="${libraryPath}:$LD_LIBRARY_PATH"
-            '';
-          };
+          shellHook = ''
+            export LD_LIBRARY_PATH="${libraryPath}:$LD_LIBRARY_PATH"
+          '';
+        };
+
+	kicad = pkgs.kicad;
+
+        electronicsPackages = with pkgs; [
+          appimage-run
+          ergogen
+          findutils
+          freecad
+          gh
+          gnumake
+          interactive-html-bom
+          kicad
+          kicadAddons.kikit
+          python3
+          saleae-logic-2
+        ];
+
+        electronicsEnv = pkgs.buildEnv {
+          name = "electronics-env";
+          paths = electronicsPackages;
+        };
       in
       {
         devShells = {
-	  zephyr-dev = zephyrShell;
+          zephyr-dev = zephyrShell;
 
           zmk-dev = pkgs.mkShell {
             name = "zmk-dev";
-	    #inputsFrom = [ zephyrShell ];
-            packages = with pkgs; [
-	      adafruit-nrfutil
-	      cmake
-	      ninja
-	      protobuf
-	      (zephyr-nix.packages.${system}.sdk-0_16.override {
-	        targets = [
-		  "arm-zephyr-eabi"
-	        ];
-	        inherit lib;
-	      })
-	      zephyr.pythonEnv
-              pythonEnv
-	      zephyr.hosttools
-	    ] ++ (with pkgs.python3Packages; [ uv pre-commit ]);
+            #inputsFrom = [ zephyrShell ];
+            packages =
+              with pkgs;
+              [
+                adafruit-nrfutil
+                cmake
+                ninja
+                protobuf
+                (zephyr-nix.packages.${system}.sdk-0_16.override {
+                  targets = [
+                    "arm-zephyr-eabi"
+                  ];
+                  inherit lib;
+                })
+                zephyr.pythonEnv
+                pythonEnv
+                zephyr.hosttools
+              ]
+              ++ (with pkgs.python3Packages; [
+                uv
+                pre-commit
+              ]);
 
             shellHook = ''
               	      export PATH=$PATH:~/.local/bin
@@ -246,6 +273,27 @@
 	      rust-bin.beta.latest.default
 	    ];
 	  };
+
+          electronics-dev = pkgs.mkShell {
+            name = "electronics-dev";
+            packages = electronicsPackages;
+
+            shellHook = ''
+              	  echo
+              	  echo "=== Welcome to your wasted life playground! ==="
+              	  echo
+              	  echo "KiCAD: `${kicad}/bin/kicad-cli --version`"
+              	  echo "KiKit: `${pkgs.kikit}/bin/kikit --version`"
+              	  echo "ergogen: `${pkgs.ergogen}/bin/ergogen --version`"
+              	  echo "ibom: `${pkgs.interactive-html-bom}/bin/generate_interactive_bom --version`"
+              	  echo "FreeCAD: `${pkgs.freecad}/bin/freecadcmd --version`"
+              	  echo
+
+              	  export KICAD10_FOOTPRINT_DIR="${kicad.libraries.footprints}/share/kicad/footprints"
+              	  export KICAD10_3DMODEL_DIR="${kicad.libraries.packages3d}/share/kicad/3dmodels"
+              	  export KICAD10_SYMBOL_DIR="${kicad.libraries.symbols}/share/kicad/symbols"
+              	'';
+          };
         };
       }
     );
