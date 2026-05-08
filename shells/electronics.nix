@@ -34,5 +34,6 @@ pkgs.mkShell {
     	  export KICAD10_FOOTPRINT_DIR="${kicad.libraries.footprints}/share/kicad/footprints"
     	  export KICAD10_3DMODEL_DIR="${kicad.libraries.packages3d}/share/kicad/3dmodels"
     	  export KICAD10_SYMBOL_DIR="${kicad.libraries.symbols}/share/kicad/symbols"
+	  export XDG_DATA_DIRS="${pkgs.gsettings-desktop-schemas}/share/gsettings-data-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-data-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS"
     	'';
 }
