@@ -7,6 +7,7 @@ let
     freecad
     gh
     gnumake
+    gtk3
     interactive-html-bom
     kicad
     kicadAddons.kikit
