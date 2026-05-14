@@ -1,20 +1,21 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-stable, ... }:
 let
-  electronicsPackages = with pkgs; [
+  electronicsPackages = (with pkgs; [
     appimage-run
     ergogen
     findutils
-    freecad
     gh
     gnumake
     gtk3
     interactive-html-bom
     kicad
     kicadAddons.kikit
-    python3
+    (python3.withPackages(pp: with pp; [ ezdxf ]))
     saleae-logic-2
-  ];
+    xvfb-run
+  ]) ++ (with pkgs-stable; [ freecad ]);
   kicad = pkgs.kicad;
+  freecad = pkgs-stable.freecad;
 in
 pkgs.mkShell {
   name = "electronics-dev";
@@ -28,7 +29,7 @@ pkgs.mkShell {
     	  echo "KiKit: `${pkgs.kikit}/bin/kikit --version`"
     	  echo "ergogen: `${pkgs.ergogen}/bin/ergogen --version`"
     	  echo "ibom: `${pkgs.interactive-html-bom}/bin/generate_interactive_bom --version`"
-    	  echo "FreeCAD: `${pkgs.freecad}/bin/freecadcmd --version`"
+    	  echo "FreeCAD: `${freecad}/bin/freecadcmd --version`"
     	  echo
 
     	  export KICAD10_FOOTPRINT_DIR="${kicad.libraries.footprints}/share/kicad/footprints"

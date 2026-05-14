@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-stable,
   self,
   system,
   zephyr-nix,
@@ -22,6 +23,7 @@ builtins.listToAttrs (
         self
         system
         pkgs
+        pkgs-stable
         zephyr-nix
         ;
     };
