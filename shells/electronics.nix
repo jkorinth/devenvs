@@ -14,6 +14,7 @@ let
     (python3.withPackages(pp: with pp; [ ezdxf ]))
     saleae-logic-2
     xvfb-run
+    zip
   ]) ++ (with pkgs-stable; [ freecad ]);
   kicad = pkgs.kicad;
   freecad = pkgs-stable.freecad;
