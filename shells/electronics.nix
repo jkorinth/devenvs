@@ -4,6 +4,7 @@ let
     appimage-run
     ergogen
     findutils
+    gerbv
     gh
     gnumake
     gtk3
