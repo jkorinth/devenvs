@@ -22,6 +22,8 @@ pkgs.mkShell {
     nrf-udev
     nrfutil
     openocd
+    pkg-config
+    SDL2
     saleae-logic-2
     screen
     zephyr.pythonEnv
