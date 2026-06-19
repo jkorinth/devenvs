@@ -28,7 +28,7 @@ pkgs.mkShell {
     screen
     zephyr.pythonEnv
     zephyr.hosttools
-    (zephyr.sdkFull-1_0.override {
+    (zephyr.sdkFull.override {
       targets = [
         "arm-zephyr-eabi"
       ];
