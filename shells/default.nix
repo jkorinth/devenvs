@@ -8,6 +8,7 @@
 }:
 let
   shells = [
+    "blog"
     "electronics"
     "rust"
     "typst"
