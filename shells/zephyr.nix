@@ -16,6 +16,7 @@ pkgs.mkShell {
     esptool
     gcc-arm-embedded
     gnumake
+    go-task
     gperf
     mbed-cli
     minicom
