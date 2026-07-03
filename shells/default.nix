@@ -12,7 +12,6 @@ let
     "electronics"
     "rust"
     "typst"
-    "zephyr"
     "zmk"
   ];
 in

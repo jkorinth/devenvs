@@ -7,7 +7,17 @@
     flake-utils.url = "github:numtide/flake-utils";
     rust-overlay.url = "github:oxalica/rust-overlay";
 
-    zephyr = {
+    zephyr35 = {
+      url = "github:zephyrproject-rtos/zephyr/v3.5.0";
+      flake = false;
+    };
+
+    zephyr41 = {
+      url = "github:zephyrproject-rtos/zephyr/v4.1.0";
+      flake = false;
+    };
+
+    zephyr43 = {
       url = "github:zephyrproject-rtos/zephyr/v4.3.0";
       flake = false;
     };
@@ -16,9 +26,10 @@
       url = "github:nix-community/zephyr-nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        zephyr.follows = "zephyr";
+        zephyr.follows = "zephyr41";
       };
     };
+
   };
 
   outputs =
@@ -28,7 +39,9 @@
       nixpkgs-stable,
       rust-overlay,
       self,
-      zephyr,
+      zephyr35,
+      zephyr41,
+      zephyr43,
       zephyr-nix,
       ...
     }:
@@ -57,17 +70,32 @@
             ];
           };
         };
-        devShells = import ./shells {
-          inherit
-            pkgs
-            pkgs-stable
-            rust-overlay
-            self
-            system
-            zephyr
-            zephyr-nix
-            ;
-        };
+        mkZephyrShell =
+          zephyr-input:
+          import ./shells/zephyr.nix {
+            inherit
+              system
+              pkgs
+              zephyr-nix
+              zephyr-input
+              ;
+          };
+        devShells =
+          import ./shells {
+            inherit
+              pkgs
+              pkgs-stable
+              rust-overlay
+              self
+              system
+              zephyr-nix
+              ;
+          }
+          // {
+            zephyr35 = mkZephyrShell zephyr35;
+            zephyr41 = mkZephyrShell zephyr41;
+            zephyr43 = mkZephyrShell zephyr43;
+          };
       in
       {
         inherit devShells;

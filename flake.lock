@@ -93,11 +93,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776715674,
-        "narHash": "sha256-Gs1VnEkCkkRZxJQAC/Dhz0Jbfi22mFXChbtNg9w/Ybg=",
+        "lastModified": 1782089418,
+        "narHash": "sha256-LRD1SuQWr49fGq3A+8GLXfsLE2xqIpQA440YDZwms3M=",
         "owner": "pyproject-nix",
         "repo": "pyproject.nix",
-        "rev": "69f57f27e52a87c54e28138a75ec741cd46663c9",
+        "rev": "43f0b40edd0a74c63f66b7b48d969ae6b740d611",
         "type": "github"
       },
       "original": {
@@ -112,8 +112,10 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-stable": "nixpkgs-stable",
         "rust-overlay": "rust-overlay",
-        "zephyr": "zephyr",
-        "zephyr-nix": "zephyr-nix"
+        "zephyr-nix": "zephyr-nix",
+        "zephyr35": "zephyr35",
+        "zephyr41": "zephyr41",
+        "zephyr43": "zephyr43"
       }
     },
     "rust-overlay": {
@@ -157,33 +159,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1776489725,
-        "narHash": "sha256-9MhAOHQeMxxMHq1Rej4Hqtb8KPT1z+1Y7WlV/N4EcwY=",
+        "lastModified": 1781579814,
+        "narHash": "sha256-amlVxb63aq2B/8ayBI8xveuGEnbQwp+CG/cj98JTu8c=",
         "owner": "pyproject-nix",
         "repo": "uv-python.nix",
-        "rev": "bf8f911a7bd2b93bbcd92ef9082f226ca16ca8fe",
+        "rev": "45b151c2d3866ddf9cce423e34c178458421eeeb",
         "type": "github"
       },
       "original": {
         "owner": "pyproject-nix",
         "repo": "uv-python.nix",
-        "type": "github"
-      }
-    },
-    "zephyr": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1763048108,
-        "narHash": "sha256-NSv0utc4dqeJClldgFxezt0/qNJ1Xb0sh7zN5qa3uVk=",
-        "owner": "zephyrproject-rtos",
-        "repo": "zephyr",
-        "rev": "3568e1b6d5cdd51a6b964a2a1d6d29200fea2056",
-        "type": "github"
-      },
-      "original": {
-        "owner": "zephyrproject-rtos",
-        "ref": "v4.3.0",
-        "repo": "zephyr",
         "type": "github"
       }
     },
@@ -196,7 +181,7 @@
         "pyproject-nix": "pyproject-nix",
         "uv-python": "uv-python",
         "zephyr": [
-          "zephyr"
+          "zephyr41"
         ]
       },
       "locked": {
@@ -210,6 +195,57 @@
       "original": {
         "owner": "nix-community",
         "repo": "zephyr-nix",
+        "type": "github"
+      }
+    },
+    "zephyr35": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1697797249,
+        "narHash": "sha256-72QFsKOWkF6BiP4XgZAXXSBcN4t6yvhAeXCpgCYrhe8=",
+        "owner": "zephyrproject-rtos",
+        "repo": "zephyr",
+        "rev": "a6eef0ba3755f2530c5ce93524e5ac4f5be30194",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zephyrproject-rtos",
+        "ref": "v3.5.0",
+        "repo": "zephyr",
+        "type": "github"
+      }
+    },
+    "zephyr41": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1741368975,
+        "narHash": "sha256-BksmenatnYe4qkw0sR4Je/JaCCWCJfLB37MXMjvuTcw=",
+        "owner": "zephyrproject-rtos",
+        "repo": "zephyr",
+        "rev": "7823374e872145b5bd018bfe447839eb36042611",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zephyrproject-rtos",
+        "ref": "v4.1.0",
+        "repo": "zephyr",
+        "type": "github"
+      }
+    },
+    "zephyr43": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1763048108,
+        "narHash": "sha256-NSv0utc4dqeJClldgFxezt0/qNJ1Xb0sh7zN5qa3uVk=",
+        "owner": "zephyrproject-rtos",
+        "repo": "zephyr",
+        "rev": "3568e1b6d5cdd51a6b964a2a1d6d29200fea2056",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zephyrproject-rtos",
+        "ref": "v4.3.0",
+        "repo": "zephyr",
         "type": "github"
       }
     }

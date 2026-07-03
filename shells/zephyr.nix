@@ -1,6 +1,7 @@
 {
   system,
   pkgs,
+  zephyr-input,
   zephyr-nix,
   ...
 }:
@@ -28,12 +29,17 @@ pkgs.mkShell {
     screen
     zephyr.pythonEnv
     zephyr.hosttools
-    (zephyr.sdkFull.override {
-      targets = [
-        "arm-zephyr-eabi"
-      ];
-    })
+    /*
+      (zephyr.sdkFull.override {
+        targets = [
+          "arm-zephyr-eabi"
+        ];
+      })
+    */
   ];
 
-  shellHook = '''';
+  shellHook = ''
+    echo export ZEPHYR_BASE=${zephyr-input}
+    echo "zephyr shell: $ZEPHYR_BASE"
+  '';
 }
