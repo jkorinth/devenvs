@@ -11,6 +11,7 @@ in
 pkgs.mkShell {
   name = "zephyr-dev";
   packages = with pkgs; [
+    SDL2
     cmake
     dtc
     esptool
@@ -18,7 +19,6 @@ pkgs.mkShell {
     gnumake
     go-task
     gperf
-    SDL2
     mbed-cli
     minicom
     ninja
@@ -27,6 +27,8 @@ pkgs.mkShell {
     openocd
     pkg-config
     protobuf
+    python3Packages.grpcio-tools
+    python3Packages.protobuf
     saleae-logic-2
     screen
     zephyr.hosttools
