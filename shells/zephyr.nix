@@ -18,6 +18,7 @@ pkgs.mkShell {
     gnumake
     go-task
     gperf
+    SDL2
     mbed-cli
     minicom
     ninja
@@ -25,11 +26,11 @@ pkgs.mkShell {
     nrfutil
     openocd
     pkg-config
-    SDL2
+    protobuf
     saleae-logic-2
     screen
-    zephyr.pythonEnv
     zephyr.hosttools
+    zephyr.pythonEnv
     /*
       (zephyr.sdkFull.override {
         targets = [
