@@ -27,12 +27,10 @@ pkgs.mkShell {
     openocd
     pkg-config
     protobuf
-    python3Packages.grpcio-tools
-    python3Packages.protobuf
     saleae-logic-2
     screen
     zephyr.hosttools
-    zephyr.pythonEnv
+    (zephyr.pythonEnv.withPackages(pp: with pp; [ grpcio-tools protobuf ]))
     /*
       (zephyr.sdkFull.override {
         targets = [
