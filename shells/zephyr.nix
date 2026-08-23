@@ -7,6 +7,9 @@
 }:
 let
   zephyr = zephyr-nix.packages.${system};
+  zephyr-python = zephyr.pythonEnv.override(old: {
+    extraPackages = ps: (old.extraPackages or (_: [])) ps ++ (with ps; [ grpcio-tools protobuf west ]);
+  });
 in
 pkgs.mkShell {
   name = "zephyr-dev";
@@ -30,7 +33,7 @@ pkgs.mkShell {
     saleae-logic-2
     screen
     zephyr.hosttools
-    (zephyr.pythonEnv.withPackages(pp: with pp; [ grpcio-tools protobuf ]))
+    zephyr-python
     /*
       (zephyr.sdkFull.override {
         targets = [
