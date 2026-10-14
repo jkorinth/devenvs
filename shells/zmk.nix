@@ -7,7 +7,7 @@
 }:
 pkgs.mkShell {
   name = "zmk-dev";
-  inputsFrom = [ self.devShells.${system}.zephyr ];
+  inputsFrom = [ self.devShells.${system}.zephyr41 ];
   packages =
     with pkgs;
     [
