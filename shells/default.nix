@@ -12,6 +12,7 @@ let
     "electronics"
     "minecraft"
     "rust"
+    "threat-dragon"
     "typst"
     "zmk"
   ];
