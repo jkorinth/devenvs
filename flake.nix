@@ -79,8 +79,11 @@
             allowUnfree = true;
             segger-jlink.acceptLicense = true;
             permittedInsecurePackages = [
-              "python3.13-ecdsa-0.19.1"
+              "python3.14-ecdsa-0.19.2"
+              "python3.14-pybars3-0.9.7"
             ];
+            # gtk2 is marked broken (EOL Dec 2020) but gerbv still needs it.
+            problems.handlers."gtk+".broken = "warn";
           };
         };
         pkgs-stable = import nixpkgs-stable {

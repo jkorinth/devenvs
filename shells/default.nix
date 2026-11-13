@@ -10,6 +10,7 @@ let
   shells = [
     "blog"
     "electronics"
+    "kicad"
     "minecraft"
     "rust"
     "threat-dragon"

@@ -1,5 +1,16 @@
 { pkgs, pkgs-stable, ... }:
 let
+  kicad = pkgs.kicad.override { compressStep = false; };
+  freecad = pkgs-stable.freecad;
+  python = pkgs.python3.withPackages (
+    pp: with pp; [
+      ezdxf
+      markdown
+      pytest
+      pyyaml
+      typer
+    ]
+  );
   electronicsPackages =
     (with pkgs; [
       appimage-run
@@ -12,14 +23,13 @@ let
       interactive-html-bom
       kicad
       kicadAddons.kikit
-      (python3.withPackages (pp: with pp; [ ezdxf ]))
+      python
+      ruff
       saleae-logic-2
       xvfb-run
       zip
     ])
-    ++ (with pkgs-stable; [ freecad ]);
-  kicad = pkgs.kicad;
-  freecad = pkgs-stable.freecad;
+    ++ [ freecad ];
 in
 pkgs.mkShell {
   name = "electronics-dev";
